@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>fr.eolya</groupId>
+	<artifactId>solr-es-auto-phrase-tokenfilter</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>solr-es-auto-phrase-tokenfilter</name>
+	<description>solr-es-auto-phrase-tokenfilter</description>
+	<modules>
+		<module>lucene-auto-phrase-tokenfilter</module>
+		<module>solr-auto-phrase-tokenfilter</module>
+		<module>es-auto-phrase-tokenfilter</module>
+	</modules>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.release>21</maven.compiler.release>
+		<lucene.version>10.3.2</lucene.version>
+		<solr.version>10.0.0</solr.version>
+		<elasticsearch.version>9.3.1</elasticsearch.version>
+		<junit.version>4.13.2</junit.version>
+		<slf4j.version>2.0.17</slf4j.version>
+	</properties>
+</project>
