@@ -29,6 +29,7 @@ of a search index) to specific things or concepts will help to address this prob
 <table>
  <tr><th>Version (tag)</th><th>Lucene version</th><th>Solr version</th><th>elasticsearch version</th><tr>
  <tr><td>solr-10.0.0_es-9.3.1</td><td>10.3.2</td><td>10.0.0</td><td>9.3.1</td></tr>
+ <tr><td>solr-10.0.0_es-9.3.1_stable</td><td>10.3.2</td><td>10.0.0</td><td>9.3.1 (classic plugin), 9.x (stable plugin)</td></tr>
 </table>
 
 The token filter is compiled once for Solr and elasticsearch : their Lucene versions must be compatible.
@@ -44,10 +45,26 @@ mvn package
 The build produces :
  - lucene-auto-phrase-tokenfilter/target/lucene-auto-phrase-tokenfilter-0.0.1-SNAPSHOT.jar : the Lucene token filter
  - solr-auto-phrase-tokenfilter/target/solr-auto-phrase-tokenfilter-0.0.1-SNAPSHOT.jar : the Solr factory and query parser
- - es-auto-phrase-tokenfilter/target/releases/es-auto-phrase-tokenfilter-0.0.1-SNAPSHOT.zip : the elasticsearch plugin
+ - es-auto-phrase-tokenfilter/target/releases/es-auto-phrase-tokenfilter-0.0.1-SNAPSHOT.zip : the elasticsearch classic plugin
+ - es-stable-auto-phrase-tokenfilter/target/releases/es-stable-auto-phrase-tokenfilter-0.0.1-SNAPSHOT.zip : the elasticsearch stable plugin
 
-The elasticsearch plugin is a "classic" plugin : it must be rebuilt for each elasticsearch version
-(property elasticsearch.version in pom.xml).
+The elasticsearch classic plugin must be rebuilt for each elasticsearch version
+(property elasticsearch.version in pom.xml). The stable plugin, built with the stable plugin API,
+runs on any elasticsearch version with the same major version.
+
+## Gradle build of the elasticsearch stable plugin
+Elastic provides a Gradle plugin, elasticsearch.stable-esplugin, to build stable plugins : it generates the plugin
+descriptor (stable-plugin-descriptor.properties) and named_components.json. There is no equivalent Maven plugin :
+the Maven build uses hand-written copies of these two files (es-stable-auto-phrase-tokenfilter/src/main/assemblies).
+The Gradle build only covers the Lucene token filter and the stable plugin ; the Maven build remains the reference
+for all the modules. Java 21 (Gradle 9.3.1 through the wrapper) :
+
+<pre>
+./gradlew assemble
+</pre>
+
+The build produces es-stable-auto-phrase-tokenfilter/build/distributions/autophrasing-stable-0.0.1-SNAPSHOT.zip.
+The versions are set in build.gradle (pluginApiVersion, luceneVersion) and must be kept in line with pom.xml.
 
 # Algorithm
 The auto phrase token filter uses a list of phrases that should be kept together as single 
@@ -235,3 +252,53 @@ curl -k -u elastic 'https://localhost:9200/test_autophrasing/_analyze' -H 'Conte
 </pre>
 
 Will produce the tokens : flights, from, san_francisco, to, new_york_city.
+
+# elasticsearch stable plugin
+Built with the stable plugin API (elasticsearch-plugin-api and elasticsearch-plugin-analysis-api) :
+https://www.elastic.co/docs/extend/elasticsearch/creating-stable-plugins
+
+The stable plugin API only gives the factory simple settings (string, number, boolean, list) :
+the phrases are set in the index settings, there is no phrases_path file.
+
+## Installation
+On every node, then restart elasticsearch :
+
+<pre>
+bin/elasticsearch-plugin install file:///path/to/es-stable-auto-phrase-tokenfilter-0.0.1-SNAPSHOT.zip
+</pre>
+
+## Input Parameters:
+<table>
+ <tr><td>phrases</td><td>list of auto phrases</td><tr>
+ <tr><td>ignoreCase</td><td>true|false(default)</td></tr>
+ <tr><td>includeTokens</td><td>true|false(default) - if true adds single tokens to output</td></tr>
+ <tr><td>replaceWhitespaceWith</td><td>single character to use to replace whitespace in phrase</td></tr>
+</table>
+
+Unknown settings are ignored, and without phrases the filter leaves the tokens unchanged.
+
+## Example index setting
+<pre>
+curl -k -u elastic -X PUT 'https://localhost:9200/test_autophrasing' -H 'Content-Type: application/json' -d '
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "autophrasing_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "autophrasing"]
+        }
+      },
+      "filter": {
+        "autophrasing": {
+          "type": "autophrasing_stable",
+          "phrases": ["new york", "new york city", "san francisco"],
+          "replaceWhitespaceWith": "_"
+        }
+      }
+    }
+  }
+}'
+</pre>
+

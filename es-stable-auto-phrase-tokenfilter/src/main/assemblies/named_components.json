@@ -1,0 +1,5 @@
+{
+  "org.elasticsearch.plugin.analysis.TokenFilterFactory": {
+    "autophrasing_stable": "org.elasticsearch.plugin.analysis.autophrasing.stable.AutoPhrasingTokenFilterFactory"
+  }
+}

@@ -1,0 +1,5 @@
+// Gradle build of the elasticsearch stable plugin (the Maven build, pom.xml, builds all the modules).
+// The Elastic Gradle plugin elasticsearch.stable-esplugin generates the plugin descriptor and named_components.json.
+rootProject.name = 'solr-es-auto-phrase-tokenfilter'
+include 'lucene-auto-phrase-tokenfilter'
+include 'es-stable-auto-phrase-tokenfilter'

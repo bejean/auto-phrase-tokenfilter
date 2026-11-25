@@ -1,0 +1,29 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.elasticsearch.gradle:build-tools:${pluginApiVersion}"
+  }
+}
+
+apply plugin: 'elasticsearch.stable-esplugin'
+
+esplugin {
+  name = 'autophrasing-stable'
+  description = 'es-stable-auto-phrase-tokenfilter'
+}
+
+dependencies {
+  implementation project(':lucene-auto-phrase-tokenfilter')
+
+  // provided by elasticsearch at runtime, not packaged in the plugin
+  compileOnly "org.elasticsearch.plugin:elasticsearch-plugin-api:${pluginApiVersion}"
+  compileOnly "org.elasticsearch.plugin:elasticsearch-plugin-analysis-api:${pluginApiVersion}"
+  compileOnly "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
+
+  testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-api:${pluginApiVersion}"
+  testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-analysis-api:${pluginApiVersion}"
+  testImplementation "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
+  testImplementation 'junit:junit:4.13.2'
+}

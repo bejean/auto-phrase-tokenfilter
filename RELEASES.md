@@ -31,3 +31,7 @@ The git history was restarted in November 2026 (branch main) : the previous vers
 - IMP - elasticsearch 9.3.1 compliant (classic plugin), elasticsearch module restored
 - IMP - elasticsearch : inline phrases list (phrases) in addition to phrases_path
 - FIX - debug output (System.out) removed from the token filter
+
+### solr-10.0.0_es-9.3.1_stable - November 2026
+- IMP - elasticsearch stable plugin (stable plugin API 9.3.1), module es-stable-auto-phrase-tokenfilter
+- IMP - Gradle build of the stable plugin (Elastic plugin elasticsearch.stable-esplugin, Gradle wrapper 9.3.1), in addition to the Maven build

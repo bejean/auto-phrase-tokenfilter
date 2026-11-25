@@ -11,6 +11,7 @@
 		<module>lucene-auto-phrase-tokenfilter</module>
 		<module>solr-auto-phrase-tokenfilter</module>
 		<module>es-auto-phrase-tokenfilter</module>
+		<module>es-stable-auto-phrase-tokenfilter</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
